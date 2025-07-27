@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Days Until - Simple Countdown Calculator</title>
+    <meta name="description" content="Calculate how many days until any date. Fast, simple, and accurate countdown calculator for birthdays, holidays, and important events.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .date-input {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .days-number {
+            font-size: 3em;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .days-text {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .presets {
+            margin-top: 30px;
+        }
+
+        .presets h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .additional-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .days-number {
+                font-size: 2.5em;
+            }
+            
+            .preset-buttons {
+                flex-direction: column;
+            }
+            
+            .preset-btn {
+                width: 100%;
+            }
+        }
+
+        .share-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .share-section.show {
+            display: block;
+        }
+
+        .share-url {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Days Until</h1>
+        <p class="subtitle">Fast & Simple Countdown Calculator</p>
+        
+        <div class="date-input">
+            <label for="targetDate">Select your target date:</label>
+            <input type="date" id="targetDate" min="">
+        </div>
+        
+        <div class="result" id="result">
+            <span class="days-number" id="daysNumber">0</span>
+            <span class="days-text" id="daysText">days to go!</span>
+        </div>
+        
+        <div class="additional-info" id="additionalInfo" style="display: none;">
+            <div id="weekInfo"></div>
+            <div id="monthInfo"></div>
+        </div>
+        
+        <div class="presets">
+            <h3>Popular Countdowns</h3>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="setPresetDate('2025-12-25')">Christmas 2025</button>
+                <button class="preset-btn" onclick="setPresetDate('2026-01-01')">New Year 2026</button>
+                <button class="preset-btn" onclick="setPresetDate('2025-10-31')">Halloween 2025</button>
+                <button class="preset-btn" onclick="setPresetDate('2025-02-14')">Valentine's Day</button>
+                <button class="preset-btn" onclick="setPresetDate('2025-12-31')">New Year's Eve</button>
+            </div>
+        </div>
+        
+        <div class="share-section" id="shareSection">
+            <h4>Share this countdown:</h4>
+            <div class="share-url" id="shareUrl"></div>
+            <button class="copy-btn" onclick="copyShareUrl()">Copy Link</button>
+        </div>
+    </div>
+
+    <script>
+        const dateInput = document.getElementById('targetDate');
+        const result = document.getElementById('result');
+        const daysNumber = document.getElementById('daysNumber');
+        const daysText = document.getElementById('daysText');
+        const additionalInfo = document.getElementById('additionalInfo');
+        const weekInfo = document.getElementById('weekInfo');
+        const monthInfo = document.getElementById('monthInfo');
+        const shareSection = document.getElementById('shareSection');
+        const shareUrl = document.getElementById('shareUrl');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+
+        // Check URL parameters for shared countdown
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedDate = urlParams.get('date');
+        if (sharedDate) {
+            dateInput.value = sharedDate;
+            calculateDays();
+        }
+
+        dateInput.addEventListener('change', calculateDays);
+
+        function calculateDays() {
+            const targetDate = new Date(dateInput.value);
+            const currentDate = new Date();
+            
+            // Reset time to avoid timezone issues
+            currentDate.setHours(0, 0, 0, 0);
+            targetDate.setHours(0, 0, 0, 0);
+            
+            const timeDiff = targetDate.getTime() - currentDate.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            if (daysDiff < 0) {
+                daysNumber.textContent = Math.abs(daysDiff);
+                daysText.textContent = daysDiff === -1 ? 'day ago' : 'days ago';
+                result.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a24)';
+            } else if (daysDiff === 0) {
+                daysNumber.textContent = 'TODAY!';
+                daysText.textContent = 'The day is here!';
+                result.style.background = 'linear-gradient(135deg, #2ed573, #1e90ff)';
+            } else {
+                daysNumber.textContent = daysDiff;
+                daysText.textContent = daysDiff === 1 ? 'day to go!' : 'days to go!';
+                result.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            }
+            
+            // Show result with animation
+            result.classList.add('show');
+            
+            // Calculate additional info
+            const weeks = Math.floor(Math.abs(daysDiff) / 7);
+            const remainingDays = Math.abs(daysDiff) % 7;
+            const months = Math.floor(Math.abs(daysDiff) / 30.44); // Average days per month
+            
+            weekInfo.textContent = `≈ ${weeks} weeks and ${remainingDays} days`;
+            monthInfo.textContent = `≈ ${months.toFixed(1)} months`;
+            
+            additionalInfo.style.display = 'block';
+            
+            // Generate share URL
+            const shareLink = `${window.location.origin}${window.location.pathname}?date=${dateInput.value}`;
+            shareUrl.textContent = shareLink;
+            shareSection.classList.add('show');
+        }
+
+        function setPresetDate(date) {
+            dateInput.value = date;
+            calculateDays();
+            
+            // Add visual feedback
+            const buttons = document.querySelectorAll('.preset-btn');
+            buttons.forEach(btn => btn.style.background = '#f8f9fa');
+            event.target.style.background = '#667eea';
+            event.target.style.color = 'white';
+            
+            setTimeout(() => {
+                event.target.style.background = '#f8f9fa';
+                event.target.style.color = '#495057';
+            }, 1000);
+        }
+
+        function copyShareUrl() {
+            const url = shareUrl.textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '#28a745';
+                }, 2000);
+            });
+        }
+
+        // Auto-update countdown every minute for precision
+        setInterval(() => {
+            if (dateInput.value) {
+                calculateDays();
+            }
+        }, 60000);
+
+        // Add some loading optimization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Preload common dates
+            const commonDates = ['2025-12-25', '2026-01-01', '2025-10-31'];
+            // This helps with perceived performance
+        });
+    </script>
+</body>
+  </html>
