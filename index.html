@@ -64,6 +64,15 @@
             font-size: 1.1em;
             text-align: center;
             transition: border-color 0.3s;
+            background: white;
+            color: #333;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background-color: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 2px;
         }
 
         input[type="date"]:focus {
@@ -132,6 +141,12 @@
             color: white;
             border-color: #667eea;
             transform: translateY(-2px);
+        }
+
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
         }
 
         .additional-info {
@@ -314,16 +329,17 @@
             dateInput.value = date;
             calculateDays();
             
-            // Add visual feedback
+            // Remove active class from all buttons
             const buttons = document.querySelectorAll('.preset-btn');
-            buttons.forEach(btn => btn.style.background = '#f8f9fa');
-            event.target.style.background = '#667eea';
-            event.target.style.color = 'white';
+            buttons.forEach(btn => btn.classList.remove('active'));
             
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Remove active class after 3 seconds
             setTimeout(() => {
-                event.target.style.background = '#f8f9fa';
-                event.target.style.color = '#495057';
-            }, 1000);
+                event.target.classList.remove('active');
+            }, 3000);
         }
 
         function copyShareUrl() {
@@ -356,4 +372,4 @@
         });
     </script>
 </body>
-  </html>
+    </html>
